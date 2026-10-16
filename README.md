@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Beach by Madras Square: design concept
 
-## Getting Started
+An independent, interactive website concept for The Beach by Madras Square, Uthandi, Chennai.
+It is **not** the official website. Do not present it as one without the venue's permission.
 
-First, run the development server:
+Built with Next.js (App Router), TypeScript, Tailwind CSS v4 and Motion for React.
+Node 20.9 or newer is required (built and checked on Node 22).
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run dev       # http://localhost:3000
+npm run lint
+npx tsc --noEmit
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/content/venues/the-beach.ts`: all venue facts, menu, gallery, occasions. One file to edit.
+- `src/types/venue.ts`: the typed venue shape, reusable for other venues.
+- `src/components/sections/`: page sections. `src/components/motion/`: hero scene, wave line.
+- `src/lib/sky.ts`: the time-of-day colour model behind the hero slider.
+- `src/fonts/`: self-hosted open-licence fonts (OFL).
+- `docs/`: `content-review.md`, `asset-register.md`, `design-decisions.md`, `deployment.md`,
+  `pitch-notes.md`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Content rules
 
-## Learn More
+Menu items only show as real when `verified: true`. Hours stay hidden until `hours` is set.
+Nothing on the page is invented: no ratings, reviews, awards or booking confirmations.
 
-To learn more about Next.js, take a look at the following resources:
+## Environment variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+None required. See `.env.example`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Status
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Lint, type check and production build pass. Not yet reviewed in a real browser or on devices,
+and not Lighthouse-tested. See `docs/design-decisions.md` for known limits.
