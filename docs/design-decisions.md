@@ -31,8 +31,9 @@ Section joins use a soft wave edge. Gallery tiles stay rectangular so the arches
 line that says this is not the official site.
 
 **Known limits.**
-- Not yet checked visually in a browser. No headless browser was available when this was built,
-  so layouts at 360, 390, 768, 1024 and 1440 px, contrast over the scene, and the lightbox focus
-  behaviour all need a manual pass.
+- Checked in headless Chromium at 360, 390, 768, 1024 and 1440 px: no sideways scroll, no console
+  errors, and hero and header text contrast measured at 12 times of day (`npm run test:contrast`).
+  Not yet checked on real phones, mobile Safari, Android Chrome or with a screen reader.
+  (An earlier version of this file wrongly said no browser was available.)
 - No JSON-LD (nothing verified yet). No privacy page because there are no forms, cookies or analytics.
 - The hero scene crops its sides on narrow portrait screens, so the sun's travel looks shorter on phones.

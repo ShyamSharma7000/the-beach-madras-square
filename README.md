@@ -38,5 +38,11 @@ None required. See `.env.example`.
 
 ## Status
 
-Lint, type check and production build pass. Not yet reviewed in a real browser or on devices,
-and not Lighthouse-tested. See `docs/design-decisions.md` for known limits.
+Checked on 17 Oct 2026 in headless Chromium: lint, type check, 35 unit tests, 56 end-to-end
+tests (preview, unconfigured and launched modes) and a text-contrast check at 360, 390, 768,
+1024 and 1440 px all pass. Lighthouse lab run on the launched build: mobile performance 89 to 91,
+desktop 99, and 100 for accessibility, best practices and SEO. `npm audit --omit=dev` reports 0
+vulnerabilities.
+
+Not yet checked: real phones, mobile Safari, Android Chrome, a screen reader, and a real email
+send (tests use a local stub). See `docs/launch-checklist.md` before going live.
