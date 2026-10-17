@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
+import { launched, siteUrl } from "@/lib/site";
 
-// Intentionally empty while the site is a private concept. Add the canonical URL at launch.
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [];
+  if (!launched) return [];
+  return [
+    { url: siteUrl, changeFrequency: "monthly", priority: 1 },
+    { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+  ];
 }

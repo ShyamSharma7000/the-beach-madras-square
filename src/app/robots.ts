@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
+import { launched, siteUrl } from "@/lib/site";
 
-// Concept build: block crawlers until the venue approves and a domain is set.
 export default function robots(): MetadataRoute.Robots {
-  return { rules: { userAgent: "*", disallow: "/" } };
+  if (!launched) return { rules: { userAgent: "*", disallow: "/" } };
+  return {
+    rules: { userAgent: "*", allow: "/", disallow: "/api/" },
+    sitemap: `${siteUrl}/sitemap.xml`,
+  };
 }

@@ -3,8 +3,8 @@
 :root {
   --abyss: #0a1c2a;
   --tide: #12394a;
-  --foam: #edf0ea;
-  --foam-dim: #dde3dc;
+  --ivory: #f6efe2;
+  --sand: #e9ddc7;
   --sea-glass: #7cc4b4;
   --ember: #f0643c;
   --ember-deep: #b4401a;
@@ -23,8 +23,8 @@
 @theme inline {
   --color-abyss: var(--abyss);
   --color-tide: var(--tide);
-  --color-foam: var(--foam);
-  --color-foam-dim: var(--foam-dim);
+  --color-ivory: var(--ivory);
+  --color-sand: var(--sand);
   --color-sea-glass: var(--sea-glass);
   --color-ember: var(--ember);
   --color-ember-deep: var(--ember-deep);
@@ -41,7 +41,7 @@ html {
 
 body {
   background: var(--abyss);
-  color: var(--foam);
+  color: var(--ivory);
   font-family: var(--font-sans);
   font-size: 1.0625rem;
   line-height: 1.6;
@@ -74,7 +74,7 @@ body {
   left: 1rem;
   top: -4rem;
   z-index: 100;
-  background: var(--foam);
+  background: var(--ivory);
   color: var(--abyss);
   padding: 0.6rem 1rem;
   border-radius: 999px;
@@ -116,11 +116,11 @@ body {
   background: var(--sun);
 }
 .btn-ghost {
-  border-color: color-mix(in srgb, var(--foam) 55%, transparent);
-  color: var(--foam);
+  border-color: color-mix(in srgb, var(--ivory) 55%, transparent);
+  color: var(--ivory);
 }
 .btn-ghost:hover {
-  background: var(--foam);
+  background: var(--ivory);
   color: var(--abyss);
 }
 .btn-ghost-dark {
@@ -129,7 +129,7 @@ body {
 }
 .btn-ghost-dark:hover {
   background: var(--abyss);
-  color: var(--foam);
+  color: var(--ivory);
 }
 
 /* ---------- Hero entrance (CSS only, content is visible if JS fails) ---------- */
@@ -156,6 +156,52 @@ body {
   animation-delay: calc(var(--i, 0) * 110ms + 150ms);
 }
 
+/* ---------- Intro: brand reveal, CSS only so it always clears itself ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: var(--abyss);
+  color: var(--ivory);
+  pointer-events: none;
+  animation: intro-out 450ms var(--ease-out) 1300ms forwards;
+}
+.intro-mark {
+  text-align: center;
+}
+.intro-wave {
+  width: clamp(9rem, 34vw, 15rem);
+  margin-inline: auto;
+  color: var(--sun);
+  overflow: visible;
+}
+.intro-wave path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 900ms var(--ease-out) 100ms forwards;
+}
+.intro-name {
+  margin-top: 1rem;
+  font-size: clamp(3.5rem, 14vw, 7rem);
+  animation: rise 800ms var(--ease-out) 250ms both;
+}
+.intro-by {
+  margin-top: 0.25rem;
+  color: color-mix(in srgb, var(--ivory) 80%, transparent);
+  animation: rise 800ms var(--ease-out) 400ms both;
+}
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+html[data-intro="seen"] .intro {
+  display: none;
+}
+
 /* Drifting wave lines */
 @keyframes drift {
   from {
@@ -173,10 +219,10 @@ body {
 @keyframes glint {
   0%,
   100% {
-    opacity: 0.25;
+    opacity: 0.12;
   }
   50% {
-    opacity: 0.9;
+    opacity: 0.5;
   }
 }
 .glint {
@@ -201,11 +247,12 @@ body {
   border-radius: 4px;
   background: linear-gradient(
     90deg,
-    #f1d9b6,
-    #bde0e6,
-    #f7a15a,
-    #d4566a,
-    #1b2f52
+    #f9c08a 0%,
+    #8fc3dc 28%,
+    #2d7cc0 50%,
+    #f0987a 72%,
+    #b3577a 86%,
+    #17284c 100%
   );
 }
 .sun-range::-moz-range-track {
@@ -213,11 +260,12 @@ body {
   border-radius: 4px;
   background: linear-gradient(
     90deg,
-    #f1d9b6,
-    #bde0e6,
-    #f7a15a,
-    #d4566a,
-    #1b2f52
+    #f9c08a 0%,
+    #8fc3dc 28%,
+    #2d7cc0 50%,
+    #f0987a 72%,
+    #b3577a 86%,
+    #17284c 100%
   );
 }
 .sun-range::-webkit-slider-thumb {
@@ -226,17 +274,17 @@ body {
   height: 1.75rem;
   margin-top: -0.8rem;
   border-radius: 50%;
-  background: var(--foam);
+  background: var(--ivory);
   border: 3px solid var(--abyss);
-  box-shadow: 0 0 0 2px var(--foam);
+  box-shadow: 0 0 0 2px var(--ivory);
 }
 .sun-range::-moz-range-thumb {
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
-  background: var(--foam);
+  background: var(--ivory);
   border: 3px solid var(--abyss);
-  box-shadow: 0 0 0 2px var(--foam);
+  box-shadow: 0 0 0 2px var(--ivory);
 }
 
 dialog::backdrop {
@@ -251,6 +299,10 @@ dialog::backdrop {
   .wave-drift,
   .glint {
     animation: none !important;
+  }
+  .intro,
+  .hero-video {
+    display: none !important;
   }
   *,
   *::before,

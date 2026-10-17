@@ -1,11 +1,12 @@
 import { WaveLine } from "@/components/motion/WaveLine";
 import { WaveEdge } from "@/components/ui/WaveEdge";
 import { theBeach as v } from "@/content/venues/the-beach";
+import { COLOR } from "@/lib/tokens";
 
 export function Story() {
   return (
-    <section id="story" className="relative bg-foam py-24 text-abyss sm:py-32">
-      <WaveEdge color="#EDF0EA" />
+    <section id="story" className="relative bg-ivory py-24 text-abyss sm:py-32">
+      <WaveEdge color={COLOR.abyss} />
       <div className="wrap grid gap-12 md:grid-cols-12">
         <h2 className="display text-[clamp(2.6rem,6.2vw,5.4rem)] md:col-span-7">
           A table with the Bay of Bengal in front of it

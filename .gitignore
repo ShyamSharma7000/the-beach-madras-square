@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Keep the documented example file tracked
+!.env.example
+
+# test and audit output
+/test-results/
+/playwright-report/
+/.lighthouse/

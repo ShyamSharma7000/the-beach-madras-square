@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { ArtTile } from "@/components/gallery/ArtTile";
+import { Media } from "@/components/gallery/Media";
 import type { GalleryItem } from "@/types/venue";
 
 const ASPECT: Record<GalleryItem["aspect"], string> = {
@@ -41,12 +41,14 @@ export function Gallery({ items }: { items: GalleryItem[] }) {
               className="group relative block w-full overflow-hidden rounded-xl"
               aria-label={`Open image: ${item.caption}`}
             >
-              <ArtTile
+              <Media
+                src={item.src}
+                alt=""
                 variant={item.tile}
                 idPrefix={`grid-${item.id}`}
                 className={`${ASPECT[item.aspect]} w-full transition-transform duration-500 ease-out group-hover:scale-[1.04]`}
               />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-abyss/80 to-transparent px-4 pb-3 pt-10 text-left text-base text-foam">
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-abyss/80 to-transparent px-4 pb-3 pt-10 text-left text-base text-ivory">
                 {item.caption}
               </span>
             </button>
@@ -63,7 +65,7 @@ export function Gallery({ items }: { items: GalleryItem[] }) {
           if (e.key === "ArrowRight") step(1);
           if (e.key === "ArrowLeft") step(-1);
         }}
-        className="m-auto w-[min(92vw,56rem)] max-w-none bg-transparent p-0 text-foam backdrop:bg-abyss/90"
+        className="m-auto w-[min(92vw,56rem)] max-w-none bg-transparent p-0 text-ivory backdrop:bg-abyss/90"
       >
         {current && (
           <motion.figure
@@ -74,19 +76,21 @@ export function Gallery({ items }: { items: GalleryItem[] }) {
             className="relative"
           >
             <div role="img" aria-label={current.alt} className="overflow-hidden rounded-2xl">
-              <ArtTile
+              <Media
+                src={current.src}
+                alt={current.alt}
                 variant={current.tile}
                 idPrefix={`lb-${current.id}`}
-                className="max-h-[72vh] w-full"
+                sizes="(min-width: 900px) 56rem, 92vw"
+                className={current.src ? "aspect-[4/3] max-h-[72vh] w-full" : "max-h-[72vh] w-full"}
               />
             </div>
             <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-2">
               <span className="display text-3xl">{current.caption}</span>
               {current.placeholder && (
-                <span className="text-sm text-foam/80">
-                  Illustration. The venue&rsquo;s own photograph goes here.
-                </span>
+                <span className="text-sm text-ivory/80">Illustration</span>
               )}
+              {current.credit && <span className="text-sm text-ivory/80">{current.credit}</span>}
             </figcaption>
           </motion.figure>
         )}

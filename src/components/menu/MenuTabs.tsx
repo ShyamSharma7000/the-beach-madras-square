@@ -4,12 +4,16 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { MenuCategory } from "@/types/venue";
 
+/**
+ * Highlights from the venue's menu. Only categories that contain confirmed dishes are passed in,
+ * and only confirmed dishes are drawn. With a single category the tabs are omitted.
+ */
 export function MenuTabs({ categories }: { categories: MenuCategory[] }) {
   const [active, setActive] = useState(0);
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
   const reduce = useReducedMotion();
   const cat = categories[active];
-  const hasVerified = cat.items.some((i) => i.verified);
+  const items = cat.items.filter((i) => i.verified);
 
   function onKeyDown(e: React.KeyboardEvent, i: number) {
     const last = categories.length - 1;
@@ -26,41 +30,42 @@ export function MenuTabs({ categories }: { categories: MenuCategory[] }) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Menu categories" className="flex flex-wrap gap-2">
-        {categories.map((c, i) => {
-          const on = i === active;
-          return (
-            <button
-              key={c.id}
-              ref={(el) => {
-                refs.current[i] = el;
-              }}
-              role="tab"
-              id={`tab-${c.id}`}
-              aria-selected={on}
-              aria-controls={`panel-${c.id}`}
-              tabIndex={on ? 0 : -1}
-              onClick={() => setActive(i)}
-              onKeyDown={(e) => onKeyDown(e, i)}
-              className={`min-h-11 rounded-full border px-5 text-base font-medium transition-colors ${
-                on
-                  ? "border-sun bg-sun text-abyss"
-                  : "border-white/35 text-foam hover:border-foam"
-              }`}
-            >
-              {c.name}
-            </button>
-          );
-        })}
-      </div>
+      {categories.length > 1 && (
+        <div role="tablist" aria-label="Menu highlights" className="flex flex-wrap gap-2">
+          {categories.map((c, i) => {
+            const on = i === active;
+            return (
+              <button
+                key={c.id}
+                ref={(el) => {
+                  refs.current[i] = el;
+                }}
+                role="tab"
+                id={`tab-${c.id}`}
+                aria-selected={on}
+                aria-controls={`panel-${c.id}`}
+                tabIndex={on ? 0 : -1}
+                onClick={() => setActive(i)}
+                onKeyDown={(e) => onKeyDown(e, i)}
+                className={`min-h-11 rounded-full border px-5 text-base font-medium transition-colors ${
+                  on ? "border-sun bg-sun text-abyss" : "border-white/35 text-ivory hover:border-ivory"
+                }`}
+              >
+                {c.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-      <div className="mt-10 min-h-[22rem]">
+      <div className="mt-10">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={cat.id}
-            role="tabpanel"
+            role={categories.length > 1 ? "tabpanel" : "group"}
             id={`panel-${cat.id}`}
-            aria-labelledby={`tab-${cat.id}`}
+            aria-labelledby={categories.length > 1 ? `tab-${cat.id}` : undefined}
+            aria-label={categories.length > 1 ? undefined : cat.name}
             tabIndex={0}
             initial={reduce ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,33 +75,21 @@ export function MenuTabs({ categories }: { categories: MenuCategory[] }) {
           >
             <div className="md:col-span-5">
               <h3 className="display text-5xl sm:text-6xl">{cat.name}</h3>
-              <p className="mt-4 max-w-[30ch] text-lg text-foam/85">{cat.blurb}</p>
-              {!hasVerified && (
-                <p className="mt-8 max-w-[34ch] border-l-2 border-ember pl-4 text-base text-foam/85">
-                  Sample layout. The venue&rsquo;s real dishes, descriptions and prices drop in
-                  here from a single data file once they are confirmed.
-                </p>
-              )}
+              <p className="mt-4 max-w-[30ch] text-lg text-ivory/85">{cat.blurb}</p>
             </div>
-            <ul className="md:col-span-7 md:col-start-6">
-              {cat.items.map((item, i) => (
+            <ul className="md:col-span-7">
+              {items.map((item) => (
                 <li
-                  key={i}
+                  key={item.name}
                   className="grid grid-cols-[1fr_auto] gap-x-6 border-b border-white/15 py-5 first:pt-0"
                 >
                   <div>
-                    <p className={`display text-3xl ${item.verified ? "" : "text-foam/55"}`}>
-                      {item.name}
-                    </p>
-                    {item.description && (
-                      <p className={`mt-1 ${item.verified ? "text-foam/85" : "text-foam/55"}`}>
-                        {item.description}
-                      </p>
-                    )}
+                    <p className="display text-3xl">{item.name}</p>
+                    {item.description && <p className="mt-1 text-ivory/85">{item.description}</p>}
                   </div>
-                  <p className={`self-start pt-1 text-xl ${item.verified ? "text-sun" : "text-foam/45"}`}>
-                    {item.verified && item.price !== undefined ? `₹${item.price}` : "₹ ___"}
-                  </p>
+                  {item.price !== undefined && (
+                    <p className="self-start pt-1 text-xl text-sun">{`₹${item.price}`}</p>
+                  )}
                 </li>
               ))}
             </ul>

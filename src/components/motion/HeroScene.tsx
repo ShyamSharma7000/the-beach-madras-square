@@ -1,9 +1,11 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
-import { HORIZON_Y, skyAt } from "@/lib/sky";
+import { HORIZON_Y, SCENE_W, skyAt } from "@/lib/sky";
+import { COLOR } from "@/lib/tokens";
+import { HeroScrim } from "./HeroScrim";
 
-const W = 1440;
+const W = SCENE_W;
 const H = 900;
 
 function wavePath(baseline: number, amp: number, period: number, phase = 0) {
@@ -37,13 +39,17 @@ const GLINTS = Array.from({ length: 11 }, (_, i) => ({
   speed: `${2.2 + (i % 4) * 0.5}s`,
 }));
 
+/** Start just after sunrise: the sun a little above the sea. */
+const START = 0.08;
+
 export function HeroScene({ children }: { children: React.ReactNode }) {
-  const [t, setT] = useState(0.55);
+  const [t, setT] = useState(START);
   const uid = useId().replace(/:/g, "");
   const sky = useMemo(() => skyAt(t), [t]);
-  const sunY = HORIZON_Y - sky.sunHeight;
-  const reflect = Math.max(0, Math.min(1, (sky.sunHeight + 30) / 70));
+  const body = sky.body;
+  const bodyY = body ? HORIZON_Y - body.height : 0;
   const rangeId = `${uid}-time`;
+  const cloudOpacity = 0.3 * (1 - sky.starOpacity);
 
   return (
     <section
@@ -67,11 +73,13 @@ export function HeroScene({ children }: { children: React.ReactNode }) {
             <stop offset="0" stopColor={sky.sea} />
             <stop offset="1" stopColor={sky.seaDeep} />
           </linearGradient>
-          <radialGradient id={`${uid}-glow`}>
-            <stop offset="0" stopColor={sky.sun} stopOpacity="0.85" />
-            <stop offset="0.35" stopColor={sky.sun} stopOpacity="0.3" />
-            <stop offset="1" stopColor={sky.sun} stopOpacity="0" />
-          </radialGradient>
+          {sky.glows.map((g, i) => (
+            <radialGradient key={i} id={`${uid}-glow-${i}`}>
+              <stop offset="0" stopColor={g.color} stopOpacity="0.85" />
+              <stop offset="0.35" stopColor={g.color} stopOpacity="0.3" />
+              <stop offset="1" stopColor={g.color} stopOpacity="0" />
+            </radialGradient>
+          ))}
         </defs>
 
         <rect width={W} height={HORIZON_Y + 1} fill={`url(#${uid}-sky)`} />
@@ -82,36 +90,49 @@ export function HeroScene({ children }: { children: React.ReactNode }) {
           ))}
         </g>
 
-        <circle
-          cx={sky.sunX}
-          cy={sunY}
-          r={380}
-          fill={`url(#${uid}-glow)`}
-          opacity={0.35 + sky.glowOpacity * 0.65}
-        />
+        {sky.glows.map((g, i) => (
+          <circle key={i} cx={g.x} cy={g.y} r={g.r} fill={`url(#${uid}-glow-${i})`} opacity={g.opacity} />
+        ))}
 
-        <g opacity={0.3}>
+        <g opacity={cloudOpacity}>
           <ellipse cx={380} cy={190} rx={260} ry={9} fill={sky.bottom} />
           <ellipse cx={1010} cy={140} rx={330} ry={11} fill={sky.bottom} />
           <ellipse cx={1180} cy={300} rx={210} ry={7} fill={sky.bottom} />
         </g>
 
-        <circle cx={sky.sunX} cy={sunY} r={48} fill={sky.sun} />
+        {body && (
+          <g opacity={body.opacity}>
+            <circle cx={body.x} cy={bodyY} r={body.radius} fill={body.color} />
+            {body.kind === "moon" && (
+              <>
+                <circle cx={body.x - 11} cy={bodyY - 7} r={7} fill="#C5D2E6" opacity={0.55} />
+                <circle cx={body.x + 12} cy={bodyY + 9} r={5} fill="#C5D2E6" opacity={0.5} />
+                <circle cx={body.x + 6} cy={bodyY - 14} r={3.5} fill="#C5D2E6" opacity={0.45} />
+              </>
+            )}
+          </g>
+        )}
 
         <rect y={HORIZON_Y} width={W} height={H - HORIZON_Y} fill={`url(#${uid}-sea)`} />
-        <rect y={HORIZON_Y} width={W} height={2} fill={sky.sun} opacity={0.35 * reflect + 0.1} />
+        <rect
+          y={HORIZON_Y}
+          width={W}
+          height={2}
+          fill={sky.reflect.color}
+          opacity={0.12 + 0.3 * sky.reflect.strength}
+        />
 
-        <g opacity={reflect}>
+        <g opacity={sky.reflect.strength}>
           {GLINTS.map((g, i) => (
             <rect
               key={i}
               className="glint"
-              x={sky.sunX - g.w / 2}
+              x={sky.reflect.x - g.w / 2}
               y={g.y}
               width={g.w}
               height={3}
               rx={1.5}
-              fill={sky.sun}
+              fill={sky.reflect.color}
               style={{ "--delay": g.delay, "--speed": g.speed } as React.CSSProperties}
             />
           ))}
@@ -119,26 +140,18 @@ export function HeroScene({ children }: { children: React.ReactNode }) {
 
         {WAVES.map((w, i) => (
           <g key={i} className="wave-drift" style={{ "--speed": w.speed } as React.CSSProperties}>
-            <path d={w.d} fill="none" stroke="#EDF0EA" strokeOpacity={w.op} strokeWidth={w.w} />
+            <path d={w.d} fill="none" stroke={COLOR.ivory} strokeOpacity={w.op} strokeWidth={w.w} />
           </g>
         ))}
       </svg>
 
-      {/* Reading surface for the text, so contrast holds at every time of day */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[62%]"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(10,28,42,0.78) 0%, rgba(10,28,42,0.5) 45%, rgba(10,28,42,0) 100%)",
-        }}
-      />
+      <HeroScrim />
 
       <div className="wrap pointer-events-none relative pt-24 sm:pt-28">
         <div className="pointer-events-auto w-full rounded-3xl border border-white/20 bg-[rgb(10_28_42/0.72)] px-5 pb-1 pt-4 sm:ml-auto sm:max-w-xs">
           <div className="flex items-baseline justify-between gap-4">
             <label htmlFor={rangeId} className="text-sm font-semibold">
-              Move the sun
+              Follow the day
             </label>
             <output htmlFor={rangeId} className="text-sm text-sun" aria-live="polite">
               {sky.label}
