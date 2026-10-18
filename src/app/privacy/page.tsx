@@ -33,6 +33,11 @@ export default function Privacy() {
           the enquiry is about, and optionally your email, a date and a message. We use it to reply
           to your enquiry and for nothing else.
         </p>
+        <p className="mt-3 text-ivory/90">
+          To slow down abuse, the site also counts, for a short time, how many enquiries come from
+          the same network address. That count is kept in the server&rsquo;s memory only. It is not
+          saved to a file or a database and is not linked to your name.
+        </p>
 
         <h2 className="display mt-10 text-4xl">Where it goes</h2>
         <p className="mt-3 text-ivory/90">
@@ -46,6 +51,10 @@ export default function Privacy() {
         <p className="mt-3 text-ivory/90">
           This website sets no cookies and runs no analytics or advertising trackers. Fonts are
           served from the site itself.
+        </p>
+        <p className="mt-3 text-ivory/90">
+          The company that hosts this website keeps standard server logs, such as the time of each
+          visit and the network address it came from, under its own privacy policy.
         </p>
 
         <h2 className="display mt-10 text-4xl">Other sites</h2>
