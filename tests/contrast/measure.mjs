@@ -11,7 +11,7 @@
 // Needs 4.5:1 for normal text and 3:1 for large text (24px, or 18.66px bold). Exits 1 on failure.
 // Set PW_CHROMIUM_PATH to use an already-installed Chromium. Set CONTRAST_PORT to change the port.
 import { createRequire } from "node:module";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("@playwright/test");
@@ -22,7 +22,7 @@ const STEPS = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1];
 
 const server = spawn("npx", ["next", "start", "-p", String(PORT), "-H", "127.0.0.1"], {
   cwd: process.cwd(),
-  detached: true,
+  detached: process.platform !== "win32",
   stdio: "ignore",
   shell: process.platform === "win32",
   env: process.env,
@@ -168,8 +168,10 @@ try {
   }
   console.log(`\n${failures} text line(s) below WCAG AA, ${worst.size} checked across ${WIDTHS.length} widths`);
 } finally {
+  // Stop the server and everything it started. Windows has no process groups, so ask taskkill.
   try {
-    process.kill(-server.pid);
+    if (process.platform === "win32") spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"]);
+    else process.kill(-server.pid);
   } catch {}
 }
 process.exit(failures ? 1 : 0);
